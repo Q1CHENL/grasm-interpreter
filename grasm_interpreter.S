@@ -39,19 +39,12 @@ grasm_interpreter:
   execute_next:
   xor r11, r11
   mov r11b, byte ptr [rbx] 
-  mov r13, qword ptr [r15]//test
   cmp qword ptr [r15], r14
   jge end
   //jge out_of_bound_access
   
   mov r12,  qword ptr [r15] //load ip to r12 
-  mov r11b, 10//test
-  mov r11b, byte ptr [rbx + r12]//test
   mov r13b, byte ptr [rbx + r12] //load the program(encoding) into r13b
-  mov r11b, byte ptr [rbx + 1]//test
-
-  //cmp r13b, 0x11
-  //je test
   
   
   //compare the value of r13b?
@@ -273,8 +266,6 @@ grasm_interpreter:
   jmp execute_next
 
   cpy_rx: //cpy rX	--	0x11 <0X>	ac = rX
-  //cmp r14, 3
-  //je test
   inc qword ptr [r15] //inc ip to get the 1 byte register
   
   cmp qword ptr [r15], r14
@@ -342,10 +333,8 @@ grasm_interpreter:
 
   add r10b, 2
   add r9b, 2
-  mov r13, qword ptr [r15 + r9*8]//TEST
   mov rax, qword ptr [r15 + r9*8] //mov content of rY to rax
   mov [r15 + r10*8], rax //mov rX, which is in rax, to rX
-  mov r13, qword ptr [r15 + r10*8]//TEST
   inc qword ptr [r15] //inc ip for executing next instruction
   jmp execute_next 
 
@@ -468,7 +457,6 @@ grasm_interpreter:
 
 
   sub_rx_imm: //sub rX	uint64_t	0x2a <0X> <imm>	rX -= imm
-  mov r13, qword ptr [r15 + 24]//test
   inc qword ptr [r15] //inc ip to get the 1 byte register
   mov r8, qword ptr [r15] //load the value of ip to r8
   xor r9, r9
@@ -486,9 +474,7 @@ grasm_interpreter:
   jl out_of_bound_access_two_args
 
   add r9b, 2
-  mov r13, qword ptr [r15 + r9*8]//TEST
   sub qword ptr [r15 + r9*8], rax
-  mov r13, qword ptr [r15 + r9*8]//TEST
   add qword ptr [r15], 8 //add 8 to ip for executing next instruction
   jmp execute_next
 
@@ -610,11 +596,8 @@ grasm_interpreter:
   add r9, 2
   mov rax, qword ptr [r15 + r9*8] //mov content of rY to rax
 
-  mov r13, qword ptr [r15 + r10*8] //move rX to r13 //TEST
-
   mul qword ptr [r15 + r10*8] //rX * rY
   mov qword ptr [r15 + r10*8], rax //store result to rX
-  mov r13, qword ptr [r15 + r10*8] //move rX to r13 //TEST
 
   inc qword ptr [r15] //inc ip for executing next instruction
   jmp execute_next 
@@ -1108,9 +1091,7 @@ grasm_interpreter:
 
 
   shr_: //shr	uint8_t	0x50 <imm>	ac >>= imm
-  mov r13, qword ptr [r15] //test
   inc qword ptr [r15] //inc ip to get the 2 byte immediate
-  mov r13, qword ptr [r15] //test
 
   mov r8, qword ptr [r15] //load the value of ip to r8
   mov al, byte ptr [rbx + r8] //load the 1 byte immediate to rax
@@ -1124,9 +1105,7 @@ grasm_interpreter:
   inc r9b
   jmp shr_loop
   shr_loop_end:
-  mov r13, qword ptr [r15] //test
   inc qword ptr [r15] //add 1 to ip for executing next instruction
-  mov r13, qword ptr [r15] //test
   jmp execute_next
 
 
@@ -1562,7 +1541,6 @@ grasm_interpreter:
   //sar rax, 32
   add qword ptr [r15], rax //add immediate to ip
   dec qword ptr [r15]
-  mov r13, qword ptr [r15] //test
   jmp execute_next
 
 
@@ -1709,24 +1687,9 @@ grasm_interpreter:
   pop r14
   pop r13
   pop r12
-  ret
-  
-single_invalid:
-mov rax, qword ptr [0]
-
-two_len:
-mov r12,  qword ptr [r15] //load ip to r12 
-mov r13b, byte ptr [rbx + r12] //load the program(encoding) into r13b
-cmp r13b, 0x11
-je single_invalid
-jmp execute_next
-
-test:
-mov rax, qword ptr [0]
+  ret  
 
   //TODO
-
   //detect incomplete instrcution
-  //REMOVE TESTS
   //Bei mehreren "gleichzeitig" auftretenden Fehlern hat -1 Präzedenz vor -2.
   
