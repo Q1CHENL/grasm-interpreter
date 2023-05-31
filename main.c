@@ -39,7 +39,8 @@ uint8_t shl_[] = {0x54, 0x01, 0x01};
 
 uint8_t random_binary[] = {0x51, 0x37, 0x31, 0x54, 0x9e, 0x5e, 0x5b, 0x31, 0x6b, 0x58, 0x25, 0x54,
                            0x12, 0x3a, 0x7c, 0x6e, 0xab, 0x5d, 0x85, 0x7f, 0x6c, 0x93, 0xb3, 0xcf, 0x7d};
-
+uint8_t mulxy[] = {0x2d, 0x12, 0x01};
+uint8_t andxy[] = {0x33, 0x12, 0x01};
                  // ip, acc, r0, r1, r2, r3, r4, r5, r6, r7
 struct grasm_state gs = {0, 0, 4, 1, 2, 3, 4, 5, 6, 7};
 
@@ -47,7 +48,7 @@ int main(int argc, char** argv) {
     // specify length from command
     size_t len = atol(argv[1]);
 
-    uint64_t exit_status = grasm_interpreter(&gs, len, random_binary);
+    uint64_t exit_status = grasm_interpreter(&gs, len, andxy);
 
     printf("Exit code: %ld\n", exit_status);
     printf("Final state: \n");

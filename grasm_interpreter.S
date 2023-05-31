@@ -577,6 +577,7 @@ grasm_interpreter:
   mov r9b, byte ptr [rbx + r8] //load the 2 registers <XY> to r9
   
   mov r10b, r9b //store register X to r10b
+  and r9b, 0x0f
 
   //Fehler Behandlung: if Y of rY <0 or >7
   cmp r9b, 7
@@ -718,12 +719,14 @@ grasm_interpreter:
   xor r10, r10 //clear r10 preparing to hold register X 
   mov r10b, r9b //store register X to r10b
 
+  and r9b, 0x0f
   //Fehler Behandlung: if Y of rY <0 or >7
   cmp r9b, 7
   jg out_of_bound_access
   cmp r9b, 0
   jl out_of_bound_access
 
+  and r10b, 0x0f
   //Fehler Behandlung: if X of rX <0 or >7
   cmp r10b, 7
   jg out_of_bound_access
@@ -1142,6 +1145,8 @@ grasm_interpreter:
 
   shr_rx: //shr rX	--	0x52 <0X>	ac >>= rX
   inc qword ptr [r15] //inc ip to get the 1 byte register
+  cmp qword ptr [r15], r14
+  je out_of_bound_access
   mov r8, qword ptr [r15] //load the value of ip to r8
   xor r9, r9
   mov r9b, byte ptr [rbx + r8] //load the registers <0X> to r9
@@ -1259,6 +1264,8 @@ grasm_interpreter:
 
   shl_rx: //shr rX	--	0x52 <0X>	ac <<= rX
   xor r9, r9
+  cmp qword ptr [r15], r14
+  je out_of_bound_access
   inc qword ptr [r15] //inc ip to get the 1 byte register
   mov r8, qword ptr [r15] //load the value of ip to r8
   mov r9b, byte ptr [rbx + r8] //load the registers <0X> to r9
