@@ -292,21 +292,6 @@ grasm_interpreter:
   dec qword ptr [r15]
   jmp op_unknown_incomplete
  
-  
-
-  //   set: //set	uint64_t	0x10 <imm>	ac = imm
-  // inc qword ptr [r15] //inc ip to get the 8 byte immediate
-  // cmp qword ptr [r15], r14
-  // jge out_of_bound_access
-  // mov r8, qword ptr [r15] //load the value of ip to r8
-  // add qword ptr [r15], 8 //inc ip for executing next instruction
-  // cmp qword ptr [r15], r14
-  // jge out_of_bound_access
-  // mov rax, qword ptr [rbx + r8] //load 8 bytes from ip
-  // bswap rax //convert little endian to big endian
-  // mov qword ptr [r15 + 8], rax //store the immediate to acc
-  // jmp execute_next //do i need to set ip here?
-  
 
   cpy_rx_ry: //cpy rX rY	--	0x19 <XY>	rX = rY
   xor r10, r10
