@@ -19,7 +19,6 @@
 //                             add        0x1234567
 
 grasm_interpreter:
-//mov rax, qword ptr [0]
   //e.g only one instruction add in prog
   push r12
   push r13
@@ -214,13 +213,21 @@ grasm_interpreter:
   mov rax, -1
   jmp end_stack
 
+
+  out_of_bound_access_or_invalid_register:
+  mov rax, -2
+  jmp end_stack
+
+
   stop:
   inc qword ptr [r15]
   jmp end
 
+
   noop:
   inc qword ptr [r15] //inc ip for next op
   jmp execute_next
+
 
   set_8_imm: // set	uint64_t	0x10 <imm>	ac = imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -233,6 +240,7 @@ grasm_interpreter:
   mov qword ptr [r15 + 8], rax // store imm to acc
   add qword ptr [r15], 9 // increase ip to next op
   jmp execute_next
+
 
   set_rx_8_imm: // set rX	uint64_t	0x18 <0X> <imm>	rX = imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -256,6 +264,7 @@ grasm_interpreter:
   add qword ptr [r15], 10 // point to next op
   jmp execute_next
 
+
   cpy_rx: //cpy rX	--	0x11 <0X>	ac = rX
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 1// add instruction len-1 to ip
@@ -275,6 +284,7 @@ grasm_interpreter:
   mov qword ptr [r15 + 8], rax //store the value in rX to acc
   add qword ptr [r15], 2 // ip points to next op
   jmp execute_next
+
 
   cpy_rx_ry: //cpy rX rY	--	0x19 <XY>	rX = rY
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -306,6 +316,7 @@ grasm_interpreter:
   add qword ptr [r15], 2 //ip points to next ip
   jmp execute_next
 
+
   add_8_imm: //add	uint64_t	0x20 <imm>	ac += imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 8// add instruction len-1 to ip
@@ -317,6 +328,7 @@ grasm_interpreter:
   add qword ptr [r15 + 8], rax //add imm to acc
   add qword ptr [r15], 9
   jmp execute_next
+
 
   add_rx://add rX	--	0x21 <0X>	ac += rX
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -338,6 +350,7 @@ grasm_interpreter:
 
   add qword ptr [r15], 2
   jmp execute_next  
+
 
   add_rx_8_imm: //add rX	uint64_t	0x28 <0X> <imm>	rX += imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -361,6 +374,7 @@ grasm_interpreter:
 
   add qword ptr [r15], 10 //ip points to next op
   jmp execute_next  
+
 
   add_rx_ry://add rX rY	--	0x29 <XY>	rX += rY
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -393,6 +407,7 @@ grasm_interpreter:
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
 
+
   sub_8_imm: //sub	uint64_t	0x22 <imm>	ac -= imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 8// add instruction len-1 to ip
@@ -404,6 +419,7 @@ grasm_interpreter:
   sub qword ptr [r15 + 8], rax //add imm to acc
   add qword ptr [r15], 9 //ip points to next op
   jmp execute_next
+
 
   sub_rx_8_imm://sub rX	uint64_t	0x2a <0X> <imm>	rX -= imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -427,6 +443,7 @@ grasm_interpreter:
   add qword ptr [r15], 10 //ip points to next op
   jmp execute_next  
 
+
   sub_rx: //sub rX	--	0x23 <0X>	ac -= rX
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 1// add instruction len-1 to ip
@@ -447,6 +464,7 @@ grasm_interpreter:
 
   add qword ptr [r15], 2
   jmp execute_next  
+
 
   sub_rx_ry: //sub rX rY	--	0x2b <XY>	rX -= rY
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -479,6 +497,7 @@ grasm_interpreter:
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
 
+
   mul_8_imm: //mul	uint64_t	0x24 <imm>	ac *= imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 8// add instruction len-1 to ip
@@ -491,6 +510,7 @@ grasm_interpreter:
   mov qword ptr [r15 + 8], rax
   add qword ptr [r15], 9 //ip points to next op
   jmp execute_next
+
 
   mul_rx_8_imm://mul rX	uint64_t	0x2c <0X> <imm>	rX *= imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -515,6 +535,7 @@ grasm_interpreter:
   add qword ptr [r15], 10 //ip points to next op
   jmp execute_next  
 
+
   mul_rx://mul rX	--	0x25 <0X>	ac *= rX
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 1// add instruction len-1 to ip
@@ -535,6 +556,7 @@ grasm_interpreter:
   mov qword ptr [r15 + 8], rax // sub rx from acc
   add qword ptr [r15], 2
   jmp execute_next  
+
 
   mul_rx_ry: //mul rX rY	--	0x2d <XY>	rX *= rY
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -590,6 +612,7 @@ grasm_interpreter:
   add qword ptr [r15], 2
   jmp execute_next  
 
+
   xchg_rx_ry: //xchg rX rY	--	0x2e <XY>	tmp = rX; rX = rY; rY = tmp
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 1// add instruction len-1 to ip
@@ -622,6 +645,7 @@ grasm_interpreter:
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
 
+
   and_8_imm: //and	uint64_t	0x30 <imm>	ac &= imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 8// add instruction len-1 to ip
@@ -633,6 +657,7 @@ grasm_interpreter:
   and qword ptr [r15 + 8], rax 
   add qword ptr [r15], 9 //ip points to next op
   jmp execute_next
+
 
   and_rx_8_imm://and rX	uint64_t	0x31 <0X> <imm>	rX &= imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -656,6 +681,7 @@ grasm_interpreter:
   add qword ptr [r15], 10 //ip points to next op
   jmp execute_next  
 
+
   and_rx: //and rX	--	0x32 <0X>	ac &= rX
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 1// add instruction len-1 to ip
@@ -675,6 +701,7 @@ grasm_interpreter:
   and qword ptr [r15 + 8], rax //and rx with acc
   add qword ptr [r15], 2
   jmp execute_next  
+
 
   and_rx_ry:
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -706,6 +733,7 @@ grasm_interpreter:
 
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
+
 
   or_8_imm: //or	uint64_t	0x34 <imm>	ac |= imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -791,6 +819,7 @@ grasm_interpreter:
 
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
+
 
   xor_8_imm://xor	uint64_t	0x38 <imm>	ac ^= imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -937,6 +966,7 @@ grasm_interpreter:
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
 
+
   cmp_rx_8_imm: //uint64_t	0x40 <0X> <imm>	ac = rX - imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 9// add instruction len-1 to ip
@@ -991,6 +1021,7 @@ grasm_interpreter:
 
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
+
 
   tst_rx_8_imm: //tst rX	uint64_t	0x42 <0X> <imm>	ac = rX & imm
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -1099,7 +1130,6 @@ grasm_interpreter:
 
   add qword ptr [r15], 3 //ip points to next op
   jmp execute_next  
-
 
   shr_rx://shr rX	--	0x52 <0X>	ac >>= rX
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -1358,6 +1388,7 @@ grasm_interpreter:
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
 
+
   ld_rx_ry: //ld rX rY	--	0x63 <XY>	rX = [rY]
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 1// add instruction len-1 to ip
@@ -1432,6 +1463,7 @@ grasm_interpreter:
   add qword ptr [r15], 10 //ip points to next op
   jmp execute_next  
 
+
   st_rx: //st rX	--	0x66 <0X>	[rX] = ac
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 1// add instruction len-1 to ip
@@ -1453,6 +1485,7 @@ grasm_interpreter:
 
   add qword ptr [r15], 2 //ip points to next op
   jmp execute_next
+
 
   st_rx_ry: //st rX rY	--	0x67 <XY>	[rX] = rY
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -1500,6 +1533,7 @@ grasm_interpreter:
   mov qword ptr [r15], rax
   jmp execute_next
 
+
   go_rx: //go rX	--	0x71 <0X>	ip = rX
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 1// add instruction len-1 to ip
@@ -1519,6 +1553,7 @@ grasm_interpreter:
   mov qword ptr [r15], rax //update ip
   jmp execute_next
 
+
   gr_2_addr: //gr	int16_t	0x72 <imm>	ip = ip + <imm>
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 2// add instruction len-1 to ip
@@ -1531,6 +1566,7 @@ grasm_interpreter:
   cdqe
   add qword ptr [r15], rax //add imm to ip
   jmp execute_next
+
 
   jz_8_addr: //jz	uintptr_t	0x73 <imm>	ip = ac == 0 ? <imm> : ip + sizeof(jz)
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -1547,6 +1583,7 @@ grasm_interpreter:
   ac_not_zero_jz_8_addr:
   add qword ptr [r15], 9
   jmp execute_next
+
 
   jz_rx://jz rX	--	0x74 <0X>	ip = ac == 0 ? rX : ip + sizeof(jz)
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -1590,6 +1627,7 @@ grasm_interpreter:
   add qword ptr [r15], 3 //ip points to next op
   jmp execute_next
 
+
   ecall_8_addr: //ecall	uintptr_t	0x80 <imm>	ac = <imm>(r0, .., r5)
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
   add rbx, 8// add instruction len-1 to ip
@@ -1610,6 +1648,7 @@ grasm_interpreter:
 
   add qword ptr [r15], 9 //ip points to next op
   jmp execute_next
+
 
   ecall_rx: //ecall rX	--	0x81 <0X>	ac = rX(r0, .., r5)
   mov rbx, qword ptr [r15] // load ip to rbp for local usage
@@ -1654,8 +1693,4 @@ grasm_interpreter:
   pop r13
   pop r12
   ret 
-
-  out_of_bound_access_or_invalid_register:
-  mov rax, -2
-  jmp end_stack
 
